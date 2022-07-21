@@ -15,5 +15,5 @@ public class Root {
     public int count;
     public Object next;
     public Object previous;
-    public ArrayList<Result> results;
+    public ArrayList<Film> results;
 }

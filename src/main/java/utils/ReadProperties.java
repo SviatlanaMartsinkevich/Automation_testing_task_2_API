@@ -12,7 +12,7 @@ public class ReadProperties {
         try {
             properties.load(ReadProperties.class.getClassLoader().getResourceAsStream(filename));
         } catch (IOException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

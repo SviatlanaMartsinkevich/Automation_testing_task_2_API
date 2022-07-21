@@ -1,90 +1,33 @@
 package tests;
 
 import baseEntities.BaseTest;
+import io.restassured.response.Response;
 import models.Pilot;
-import models.Root;
-import models.Starships;
+import models.Film;
+import models.Starship;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import utils.Endpoints;
-
-import java.lang.reflect.Type;
-import java.util.List;
+import utils.Utils;
 
 import static io.restassured.RestAssured.given;
 
 public class ApiTest extends BaseTest {
-    public String findFilm = "A New Hope";
-    public String name = "Biggs Darklighter";
-    List<String> chars;
-    List<String> starships;
-    List<String> pilots;
+    private final String titleOfFilm = "A New Hope";
+    private final String pilotName = "Biggs Darklighter";
+    private final String starshipClass = "Starfighter";
+    private final String skyWalker = "Luke Skywalker";
+
 
     @Test
-    public void searchFilm2() {
-        Root root = given()
-                .when()
-                .get(Endpoints.GET_ALL_FILMS + Endpoints.SEARCH + findFilm)
-                .then().log().body()
-                .extract().as(Root.class);
-
-        String actualTitle = root.getResults().get(0).getTitle();
-        chars = root.getResults().get(0).getCharacters();
-
-        Assert.assertEquals(actualTitle, findFilm);
-
-    }
-
-    @Test
-    public void searchFilm3() {
-        for (int i = 0; i < chars.size(); ) {
-            String link = chars.get(i);
-
-            Pilot pilot = given()
-                    .when()
-                    .get(link)
-                    .then()
-                    .extract().as((Type) Pilot.class);
-
-            String actualName = pilot.getName();
-            if (actualName.equals(name)) {
-                starships = pilot.getStarships();
-                break;
-            } else {
-                i++;
-            }
-        }
-
-        Starships starship = given()
-                .when()
-                .get(starships.get(0))
-                .then()
-                .extract().as((Type) Starships.class);
-
-        String actualNameStarship = starship.getName();
-        System.out.println("Biggs Darklighter was flying on " + actualNameStarship);
-
-        String actualClassStarship = starship.getStarship_class();
-        Assert.assertEquals(actualClassStarship, "Starfighter");
-
-        pilots = starship.getPilots();
-
-        for (int i = 0; i < pilots.size(); ) {
-            String namePilotLink = pilots.get(i);
-            Pilot pilot1 = given()
-                    .when()
-                    .get(namePilotLink)
-                    .then()
-                    .extract().as((Type) Pilot.class);
-
-            String namePilot = pilot1.getName();
-            if (namePilot.contains("Luke Skywalker")) {
-                System.out.println("Luke Skywalker is among pilots that were also flying this kind of starship");
-                break;
-            } else {
-                i++;
-            }
-        }
+    public void getDataTest() {
+        Response response = given().when().get(Endpoints.GET_ALL_FILMS);
+        Film film = Utils.findFilmByTitle(response, titleOfFilm);
+        Pilot pilot = Utils.findPilotByName(film, pilotName);
+        Starship starship = Utils.getStarshipByPilot(pilot);
+        Assert.assertEquals(starship.getStarship_class(),starshipClass);
+        Assert.assertNotNull(Utils.findPilotOfStarshipByName(starship, skyWalker),
+                "Luke Skywalker was not pilot of " + starship.getName());
     }
 }
 

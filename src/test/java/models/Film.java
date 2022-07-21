@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 @Builder
 @NoArgsConstructor
-public class Result {
+public class Film {
 
     public String title;
     public int episode_id;

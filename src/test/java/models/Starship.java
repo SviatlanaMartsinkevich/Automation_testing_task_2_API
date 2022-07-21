@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.util.Date;
 @Data
 @Builder
 @NoArgsConstructor
-public class Starships {
+public class Starship {
     public String name;
     public String model;
     public String manufacturer;
@@ -25,7 +26,7 @@ public class Starships {
     public String cargo_capacity;
     public String consumables;
     public String hyperdrive_rating;
-    @SerializedName(value = "MGLT")
+    @JsonProperty("MGLT")
     public String mGLT;
     public String starship_class;
     public ArrayList<String> pilots;
